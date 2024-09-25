@@ -1,7 +1,0 @@
-<resources>
-    <string name="app_name">ViewDemo</string>
-    <string name="txtTitle">Sample Line 1\nSample Line 2\nSample Line 3\nSample Line 4</string>
-    <string name="imgDescription">Bird or Fire</string>
-    <string name="txtShowImageOrText">Show Image</string>
-    <string name="txtShowBoth">Show Both</string>
-</resources>
