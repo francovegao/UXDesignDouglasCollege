@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">ViewDemo</string>
+    <string name="txtTitle">Sample line 1\nSample line 2\nSample 3</string>
+    <string name="imgDesc">BirdOrFire</string>
+    <string name="txtShowImageOrText">Show Image</string>
+    <string name="txtShowBoth">Show Both</string>
+    <string name="txtShowImage">Show Image</string>
+    <string name="txtShowText">Show Text</string>
+</resources>
