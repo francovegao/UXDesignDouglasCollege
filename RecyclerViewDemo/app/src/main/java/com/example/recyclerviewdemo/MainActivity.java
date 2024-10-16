@@ -1,14 +1,21 @@
 package com.example.recyclerviewdemo;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.EditText;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.recyclerviewdemo.adapters.TuneAdapter;
 import com.example.recyclerviewdemo.databinding.ActivityMainBinding;
@@ -43,12 +50,79 @@ public class MainActivity extends AppCompatActivity {
         LoadModel();  //Creates the List of data
         Log.d("RECYCLERVIEWDEMO", TuneList.size() + " Tunes");
 
-        //Initialize adapter and layout manager
+        //Initialize adapter
         TuneAdapter tuneAdapter = new TuneAdapter(TuneList);
+
+        //Initialize grid layout manager and bind it to the recycler view
+        GridLayoutManager gm = new GridLayoutManager(MainActivity.this, 2);
+        //binding.recyclerViewTunes.setLayoutManager(gm);
+
+        //Initialize layout manager and Attach layout manager
         LinearLayoutManager lm = new LinearLayoutManager(MainActivity.this);
-        //Attach layout manager and adapter
         binding.recyclerViewTunes.setLayoutManager(lm);
+
+        //Bind the adapter
         binding.recyclerViewTunes.setAdapter(tuneAdapter);
+
+        //Add item touch listener callback for swipe or move functions
+        ItemTouchHelper.SimpleCallback callback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.START | ItemTouchHelper.END) {
+
+
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                //get the index of the item
+                int position = viewHolder.getAdapterPosition();
+
+                //Left(START) SWIPE - Alert Dialog Builder
+                //Right(END) SWIPE - Delete Item
+                if(direction == ItemTouchHelper.START){
+                    //Left swipe
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                    builder.setTitle("Enter new track name");
+                    EditText editTextInputName = new EditText(MainActivity.this);
+                    builder.setView(editTextInputName);
+
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            TuneList.get(position).setTuneName(editTextInputName.getText().toString());
+                            //Update adapter
+                            tuneAdapter.notifyItemChanged(position);
+                        }
+                    });
+
+                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            tuneAdapter.notifyItemChanged(position);
+                        }
+                    });
+
+                    builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialogInterface) {
+                            tuneAdapter.notifyItemChanged(position);
+                        }
+                    });
+
+                    builder.show();
+                }else{
+                    //Right swipe
+                    TuneList.remove(position);
+                    tuneAdapter.notifyItemRemoved(position);
+                }
+            }
+        };
+
+        //Attach callback to itemtouch helper and then attach helper to recycler view
+        ItemTouchHelper helper = new ItemTouchHelper(callback);
+        helper.attachToRecyclerView(binding.recyclerViewTunes);
+
     }
 
     private void LoadModel(){
