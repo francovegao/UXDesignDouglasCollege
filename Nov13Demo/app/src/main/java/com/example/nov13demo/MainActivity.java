@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.view.View;
 
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -21,6 +22,10 @@ import com.example.nov13demo.databinding.ActivityMainBinding;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -78,6 +83,22 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+        //Create Data Structure
+        List<String> ColorDescList = new ArrayList<>(Arrays.asList("BLACK", "ORANGE", "PURPLE"));
+        List<Integer> ColorValsList = new ArrayList<>(Arrays.asList(Color.BLACK, Color.rgb(255, 156, 0), Color.parseColor("#800080")));
+        List<ColorSpec> ColorList = new ArrayList<>();
+
+        for (int i=0; i<ColorDescList.size(); i++){
+            ColorSpec colorSpec = new ColorSpec(ColorDescList.get(i), ColorValsList.get(i));
+            ColorList.add(colorSpec);
+        }
+
+        //Set Up View Model
+        ColorSpecViewModel colorSpecViewModel = new ViewModelProvider(this).get(ColorSpecViewModel.class);
+
+        //Load the data into the view model
+        colorSpecViewModel.setColorList(ColorList);
     }
 
     @Override
